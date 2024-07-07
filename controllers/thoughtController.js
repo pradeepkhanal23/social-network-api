@@ -16,7 +16,12 @@ module.exports = {
     try {
       const thought = await Thought.findOne({
         _id: req.params.thoughtId,
-      }).select("-__v");
+      })
+        .populate({
+          path: "reactions",
+          select: "-__v",
+        })
+        .select("-__v");
 
       if (!thought) {
         return res.status(404).json({ message: "No thought with that ID" });
@@ -37,7 +42,12 @@ module.exports = {
       await User.findOneAndUpdate(
         { _id: req.body.userId },
         { $addToSet: { thoughts: thought._id } }
-      );
+      )
+        .populate({
+          path: "thoughts",
+          select: "-__v",
+        })
+        .select("-__v");
 
       res.json(thought);
     } catch (err) {
@@ -52,7 +62,12 @@ module.exports = {
         { _id: req.params.thoughtId },
         { $set: req.body },
         { new: true, runValidators: true }
-      );
+      )
+        .populate({
+          path: "reactions",
+          select: "-__v",
+        })
+        .select("-__v");
 
       if (!thought) {
         return res.status(404).json({ message: "No thought with that ID" });
