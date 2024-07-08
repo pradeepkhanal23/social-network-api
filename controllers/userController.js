@@ -4,7 +4,10 @@ module.exports = {
   // Get all users
   async getUsers(req, res) {
     try {
-      const users = await User.find().select("-__v");
+      const users = await User.find().populate({
+        path: "thoughts",
+      });
+      // the populate method ensures that if a user has an associated thought in the thougts array, it will also populate that
       res.json(users);
     } catch (err) {
       res.status(500).json(err);
@@ -14,11 +17,9 @@ module.exports = {
   // Get a single user
   async getSingleUser(req, res) {
     try {
-      const user = await User.findOne({ _id: req.params.userId })
-        .populate({
-          path: "thoughts",
-        })
-        .select("-__v");
+      const user = await User.findOne({ _id: req.params.userId }).populate({
+        path: "thoughts",
+      });
 
       if (!user) {
         return res.status(404).json({ message: "No user with that ID" });
@@ -27,6 +28,62 @@ module.exports = {
       res.json(user);
     } catch (err) {
       res.status(500).json(err);
+    }
+  },
+
+  // Create a new thought
+  async createThought(req, res) {
+    try {
+      const thought = await Thought.create(req.body);
+
+      // Push the created thought's _id to the associated user's thoughts array field
+      const user = await User.findOneAndUpdate(
+        { _id: req.params.userId },
+        { $addToSet: { thoughts: thought._id } },
+        { new: true }
+      );
+
+      if (!user) {
+        return res.status(404).json({ message: "No user with that ID" });
+      }
+
+      res.json("Thought Created 🎉");
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
+
+  // Update a thought
+  async updateThought(req, res) {
+    try {
+      // deconstructing the userId and thoughtId from request parameters
+      const { thoughtId } = req.params;
+
+      //finding and updating the thought
+      const updatedThought = await Thought.findOneAndUpdate(
+        {
+          _id: thoughtId,
+        },
+        {
+          $set: req.body,
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+
+      //checking if the thought was found and updated
+      if (!updatedThought) {
+        return res.status(404).json({
+          message: "No thought with that ID",
+        });
+      }
+
+      //responsing with the updated thought
+      res.json(updatedThought);
+    } catch (error) {
+      res.status(500).json(error);
     }
   },
 
