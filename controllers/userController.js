@@ -4,10 +4,8 @@ module.exports = {
   // Get all users
   async getUsers(req, res) {
     try {
-      const users = await User.find().populate({
-        path: "thoughts",
-      });
-      // the populate method ensures that if a user has an associated thought in the thougts array, it will also populate that
+      //when we fetch all the users, we just want to show the ids of thoughts and friends
+      const users = await User.find();
       res.json(users);
     } catch (err) {
       res.status(500).json(err);
@@ -17,9 +15,14 @@ module.exports = {
   // Get a single user
   async getSingleUser(req, res) {
     try {
-      const user = await User.findOne({ _id: req.params.userId }).populate({
-        path: "thoughts",
-      });
+      //when we fetch a single user, then we want to display all the associated properties nested into it
+      const user = await User.findOne({ _id: req.params.userId })
+        .populate({
+          path: "thoughts",
+        })
+        .populate({
+          path: "friends",
+        });
 
       if (!user) {
         return res.status(404).json({ message: "No user with that ID" });
