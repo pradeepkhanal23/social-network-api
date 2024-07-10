@@ -34,18 +34,28 @@ module.exports = {
   // Create a new thought
   async createThought(req, res) {
     try {
-      const thought = await Thought.create(req.body);
+      const userId = req.params.userId;
+      const { thoughtText } = req.body;
 
-      // Push the created thought's _id to the associated user's thoughts array field
-      const user = await User.findOneAndUpdate(
+      //getting the associated user by ID
+      const associatedUser = await User.findById(userId);
+
+      if (!associatedUser) {
+        return res.status(404).json({ message: "No user with that ID" });
+      }
+
+      //npw creating the thought with the associated user's username to prevent username mismatch
+      const thought = await Thought.create({
+        thoughtText,
+        username: associatedUser.username,
+      });
+
+      // adding the thought ID to the user's thought array
+      await User.findOneAndUpdate(
         { _id: req.params.userId },
         { $addToSet: { thoughts: thought._id } },
         { new: true }
-      );
-
-      if (!user) {
-        return res.status(404).json({ message: "No user with that ID" });
-      }
+      ).populate("thoughts");
 
       res.json("Thought Created 🎉");
     } catch (err) {

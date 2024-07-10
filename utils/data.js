@@ -19,41 +19,41 @@ const users = [
   },
 ];
 
-const thoughts = [
-  {
-    thoughtText: "What a beautiful day!",
-    username: "john_doe",
-    reactions: [
-      {
-        reactionBody: "I agree!",
-        username: "jane_smith",
-      },
-      {
-        reactionBody: "Me too!",
-        username: "alex_jones",
-      },
-    ],
-  },
-  {
-    thoughtText: "Excited about the upcoming project!",
-    username: "jane_smith",
-    reactions: [
-      {
-        reactionBody: "That sounds awesome!",
-        username: "john_doe",
-      },
-    ],
-  },
-  {
-    thoughtText: "Just finished a great workout!",
-    username: "alex_jones",
-    reactions: [
-      {
-        reactionBody: "Way to go!",
-        username: "john_doe",
-      },
-    ],
-  },
-];
+// const thoughts = [
+//   {
+//     thoughtText: "What a beautiful day!",
+//     username: "john_doe",
+//     reactions: [
+//       {
+//         reactionBody: "I agree!",
+//         username: "jane_smith",
+//       },
+//       {
+//         reactionBody: "Me too!",
+//         username: "alex_jones",
+//       },
+//     ],
+//   },
+//   {
+//     thoughtText: "Excited about the upcoming project!",
+//     username: "jane_smith",
+//     reactions: [
+//       {
+//         reactionBody: "That sounds awesome!",
+//         username: "john_doe",
+//       },
+//     ],
+//   },
+//   {
+//     thoughtText: "Just finished a great workout!",
+//     username: "alex_jones",
+//     reactions: [
+//       {
+//         reactionBody: "Way to go!",
+//         username: "john_doe",
+//       },
+//     ],
+//   },
+// ];
 
-module.exports = { users, thoughts };
+module.exports = { users };
