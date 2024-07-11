@@ -72,6 +72,7 @@ module.exports = {
 
   // Remove a reaction from a thought
   async removeReaction(req, res) {
+    const { reactionId } = req.params;
     try {
       const thought = await Thought.findOneAndUpdate(
         { _id: req.params.thoughtId },
@@ -83,7 +84,20 @@ module.exports = {
         return res.status(404).json({ message: "No thought with that ID" });
       }
 
-      res.json(thought);
+      //if we hit the route one more time we wanna send user the message saying that the reactionId they have provided doesnt exist anymore as we have already removed that
+
+      //checking the reaction in the associated thought's reaction array
+      const checkReaction = thought.reactions.find(
+        (reaction) => reaction._id.toString() === reactionId
+      );
+
+      if (!checkReaction) {
+        return res.status(404).json({
+          message: "Reaction ID doesnt exists",
+        });
+      }
+
+      res.json({ message: "Reaction removed from the associated thought" });
     } catch (err) {
       res.status(500).json(err);
     }
